@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DummyIndexRouteImport } from './routes/dummy/index'
+import { Route as DummyIdRouteImport } from './routes/dummy/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const DummyIndexRoute = DummyIndexRouteImport.update({
   path: '/dummy/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DummyIdRoute = DummyIdRouteImport.update({
+  id: '/dummy/$id',
+  path: '/dummy/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dummy/$id': typeof DummyIdRoute
   '/dummy/': typeof DummyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dummy/$id': typeof DummyIdRoute
   '/dummy': typeof DummyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dummy/$id': typeof DummyIdRoute
   '/dummy/': typeof DummyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dummy/'
+  fullPaths: '/' | '/dummy/$id' | '/dummy/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dummy'
-  id: '__root__' | '/' | '/dummy/'
+  to: '/' | '/dummy/$id' | '/dummy'
+  id: '__root__' | '/' | '/dummy/$id' | '/dummy/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DummyIdRoute: typeof DummyIdRoute
   DummyIndexRoute: typeof DummyIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DummyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dummy/$id': {
+      id: '/dummy/$id'
+      path: '/dummy/$id'
+      fullPath: '/dummy/$id'
+      preLoaderRoute: typeof DummyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DummyIdRoute: DummyIdRoute,
   DummyIndexRoute: DummyIndexRoute,
 }
 export const routeTree = rootRouteImport

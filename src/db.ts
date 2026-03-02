@@ -81,15 +81,14 @@ export async function createInboxItem(title: string) {
   return item
 }
 
-const DEFAULT_DUMMY_ID = 'default'
+export async function listDummies(): Promise<Dummy[]> {
+  return db.dummies.orderBy('updatedAt').reverse().toArray()
+}
 
-export async function getDummy(): Promise<Dummy> {
-  const existing = await db.dummies.get(DEFAULT_DUMMY_ID)
-  if (existing) return existing
-
+export async function createDummy(name: string): Promise<Dummy> {
   const dummy: Dummy = {
-    id: DEFAULT_DUMMY_ID,
-    name: 'Target Dummy',
+    id: crypto.randomUUID(),
+    name,
     health: 1000,
     resist: 100,
     items: [],
@@ -99,9 +98,17 @@ export async function getDummy(): Promise<Dummy> {
   return dummy
 }
 
-export async function updateDummy(updates: Partial<Omit<Dummy, 'id'>>): Promise<void> {
-  await db.dummies.update(DEFAULT_DUMMY_ID, {
+export async function getDummyById(id: string): Promise<Dummy | undefined> {
+  return db.dummies.get(id)
+}
+
+export async function updateDummyById(id: string, updates: Partial<Omit<Dummy, 'id'>>): Promise<void> {
+  await db.dummies.update(id, {
     ...updates,
     updatedAt: new Date().toISOString(),
   })
+}
+
+export async function deleteDummy(id: string): Promise<void> {
+  await db.dummies.delete(id)
 }
