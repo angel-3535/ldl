@@ -1,0 +1,542 @@
+/* ═══════════════════════════════════════════════════
+   League of Legends — Rune Page Builder
+   Dark client aesthetic with gold filigree accents
+   ═══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Fira+Sans:wght@300;400;500;600&display=swap');
+
+.runes-page {
+  --primary-color: #c8aa6e;
+  --secondary-color: #785a28;
+  --bg-deep: #010a13;
+  --bg-mid: #0a1628;
+  --bg-surface: #0a1a2a;
+  --gold: #c8aa6e;
+  --gold-light: #f0e6d2;
+  --gold-dark: #785a28;
+  --gold-dim: #463714;
+  --border-gold: #5b4a28;
+  --text-primary: #f0e6d2;
+  --text-secondary: #a09b8c;
+  --text-dim: #5b5a56;
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Fira Sans', sans-serif;
+  overflow: hidden;
+  padding: 2rem 1rem 4rem;
+}
+
+/* Background pattern — subtle hex grid */
+.runes-bg-pattern {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(200, 170, 110, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(var(--primary-color), 0.04) 0%, transparent 50%),
+    repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      transparent 0deg 60deg,
+      rgba(200, 170, 110, 0.015) 60deg 120deg
+    );
+  background-size: 100% 100%, 100% 100%, 60px 60px;
+}
+
+.runes-bg-pattern::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(1, 10, 19, 0) 0%,
+      rgba(1, 10, 19, 0.4) 30%,
+      rgba(1, 10, 19, 0.8) 100%
+    );
+}
+
+/* ── Header ── */
+
+.runes-header {
+  position: relative;
+  z-index: 1;
+  max-width: 820px;
+  margin: 0 auto 1.5rem;
+  padding: 0 1rem;
+}
+
+.runes-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.runes-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold-light);
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
+}
+
+.runes-name:hover {
+  color: #fff;
+}
+
+.runes-name svg {
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: var(--gold);
+}
+
+.runes-name:hover svg {
+  opacity: 1;
+}
+
+.runes-name-input {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold-light);
+  background: rgba(200, 170, 110, 0.08);
+  border: 1px solid var(--gold-dark);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  outline: none;
+  width: 320px;
+}
+
+.runes-name-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 8px rgba(200, 170, 110, 0.25);
+}
+
+/* ── Body layout ── */
+
+.runes-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* ── Path Selector ── */
+
+.path-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.path-selector-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.path-icons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.path-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--border-gold);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  padding: 0;
+}
+
+.path-icon img {
+  filter: grayscale(100%) brightness(0.5);
+  transition: filter 0.25s ease;
+}
+
+.path-icon:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: rgba(200, 170, 110, 0.1);
+  transform: scale(1.1);
+}
+
+.path-icon:hover:not(:disabled) img {
+  filter: grayscale(0%) brightness(1);
+}
+
+.path-icon.path-selected {
+  border-color: var(--path-color, var(--gold));
+  background: radial-gradient(circle, rgba(200, 170, 110, 0.15) 0%, transparent 70%);
+  box-shadow:
+    0 0 12px rgba(200, 170, 110, 0.3),
+    inset 0 0 8px rgba(200, 170, 110, 0.1);
+}
+
+.path-icon.path-selected img {
+  filter: grayscale(0%) brightness(1.1);
+}
+
+.path-icon.path-disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* ── Tree Columns ── */
+
+.runes-tree {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  min-width: 0;
+}
+
+.runes-primary {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(200, 170, 110, 0.04) 0%, transparent 60%);
+  border-radius: 12px 0 0 12px;
+  border: 1px solid rgba(200, 170, 110, 0.06);
+  border-right: none;
+}
+
+.runes-secondary {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(120, 90, 40, 0.04) 0%, transparent 60%);
+  border-radius: 0 12px 12px 0;
+  border: 1px solid rgba(200, 170, 110, 0.06);
+  border-left: none;
+}
+
+/* ── Divider ── */
+
+.runes-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 3rem;
+  gap: 0;
+  align-self: stretch;
+}
+
+.runes-divider-line {
+  width: 1px;
+  flex: 1;
+  background: linear-gradient(180deg, transparent, var(--gold-dim), transparent);
+}
+
+.runes-divider-diamond {
+  width: 10px;
+  height: 10px;
+  background: var(--gold-dim);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ── Rune Slots ── */
+
+.runes-slots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  position: relative;
+}
+
+.runes-path-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--tree-color, var(--gold));
+  margin-bottom: 0.75rem;
+  text-shadow: 0 0 20px color-mix(in srgb, var(--tree-color, var(--gold)) 40%, transparent);
+}
+
+.runes-path-line {
+  width: 1px;
+  height: 12px;
+  background: var(--tree-color, var(--gold));
+  opacity: 0.3;
+  margin-bottom: 0.5rem;
+}
+
+.rune-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  position: relative;
+}
+
+.rune-row::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.rune-row:last-child::after {
+  display: none;
+}
+
+.rune-row-keystone {
+  padding: 0.75rem 0 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.rune-row-locked {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ── Rune Icon ── */
+
+.rune-icon {
+  position: relative;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--gold-dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.rune-icon img {
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  filter: grayscale(30%) brightness(0.7);
+}
+
+.rune-icon:hover {
+  border-color: var(--gold);
+  transform: scale(1.12);
+  z-index: 2;
+}
+
+.rune-icon:hover img {
+  filter: grayscale(0%) brightness(1);
+}
+
+.rune-icon.rune-dimmed {
+  opacity: 0.35;
+}
+
+.rune-icon.rune-dimmed:hover {
+  opacity: 0.8;
+}
+
+.rune-icon.rune-selected {
+  border-color: var(--tree-color, var(--gold));
+  background: radial-gradient(circle, rgba(200, 170, 110, 0.2) 0%, transparent 70%);
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--tree-color, var(--gold)) 40%, transparent),
+    0 0 4px color-mix(in srgb, var(--tree-color, var(--gold)) 20%, transparent);
+  opacity: 1;
+}
+
+.rune-icon.rune-selected img {
+  filter: grayscale(0%) brightness(1.15);
+}
+
+.rune-keystone {
+  border-width: 2px;
+}
+
+.rune-keystone.rune-selected {
+  border-width: 3px;
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--tree-color, var(--gold)) 50%, transparent),
+    0 0 6px color-mix(in srgb, var(--tree-color, var(--gold)) 30%, transparent);
+}
+
+/* Glow ring */
+.rune-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--tree-color, var(--gold)) 30%, transparent);
+  animation: rune-pulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes rune-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Tooltip */
+.rune-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #010a13;
+  border: 1px solid var(--gold-dark);
+  color: var(--gold-light);
+  font-size: 0.72rem;
+  font-family: 'Fira Sans', sans-serif;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+  text-align: center;
+  line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.rune-icon:hover .rune-tooltip,
+.shard-icon:hover .rune-tooltip {
+  opacity: 1;
+}
+
+/* ── Empty state ── */
+
+.runes-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+}
+
+.runes-empty p {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+}
+
+/* ── Stat Shards ── */
+
+.stat-shards {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.stat-shards-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.stat-shards-divider {
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  margin-bottom: 0.25rem;
+}
+
+.shard-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.shard-icon {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid var(--gold-dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.shard-icon img {
+  filter: grayscale(60%) brightness(0.6);
+  transition: filter 0.2s ease;
+}
+
+.shard-icon:hover {
+  border-color: var(--gold);
+  transform: scale(1.15);
+  z-index: 2;
+}
+
+.shard-icon:hover img {
+  filter: grayscale(0%) brightness(1);
+}
+
+.shard-icon.shard-selected {
+  border-color: var(--gold);
+  background: radial-gradient(circle, rgba(200, 170, 110, 0.2) 0%, transparent 70%);
+  box-shadow: 0 0 10px rgba(200, 170, 110, 0.3);
+}
+
+.shard-icon.shard-selected img {
+  filter: grayscale(0%) brightness(1.2);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 700px) {
+  .runes-body {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .runes-primary,
+  .runes-secondary {
+    border-radius: 12px;
+    border: 1px solid rgba(200, 170, 110, 0.06);
+  }
+
+  .runes-divider {
+    flex-direction: row;
+    padding: 0;
+    gap: 0;
+    height: auto;
+    padding: 0.5rem 0;
+  }
+
+  .runes-divider-line {
+    height: 1px;
+    width: 100%;
+  }
+}
