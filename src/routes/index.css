@@ -68,6 +68,28 @@
   padding: 0 1rem;
 }
 
+.runes-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.runes-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #785a28;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.runes-nav-link:hover {
+  color: #c8aa6e;
+}
+
 .runes-title-row {
   display: flex;
   align-items: center;

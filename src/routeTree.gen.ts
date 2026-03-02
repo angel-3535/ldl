@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DummyIndexRouteImport } from './routes/dummy/index'
+import { Route as BuildIndexRouteImport } from './routes/build/index'
 import { Route as DummyIdRouteImport } from './routes/dummy/$id'
+import { Route as BuildIdRouteImport } from './routes/build/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,39 +25,57 @@ const DummyIndexRoute = DummyIndexRouteImport.update({
   path: '/dummy/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuildIndexRoute = BuildIndexRouteImport.update({
+  id: '/build/',
+  path: '/build/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DummyIdRoute = DummyIdRouteImport.update({
   id: '/dummy/$id',
   path: '/dummy/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuildIdRoute = BuildIdRouteImport.update({
+  id: '/build/$id',
+  path: '/build/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/build/$id': typeof BuildIdRoute
   '/dummy/$id': typeof DummyIdRoute
+  '/build/': typeof BuildIndexRoute
   '/dummy/': typeof DummyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/build/$id': typeof BuildIdRoute
   '/dummy/$id': typeof DummyIdRoute
+  '/build': typeof BuildIndexRoute
   '/dummy': typeof DummyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/build/$id': typeof BuildIdRoute
   '/dummy/$id': typeof DummyIdRoute
+  '/build/': typeof BuildIndexRoute
   '/dummy/': typeof DummyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dummy/$id' | '/dummy/'
+  fullPaths: '/' | '/build/$id' | '/dummy/$id' | '/build/' | '/dummy/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dummy/$id' | '/dummy'
-  id: '__root__' | '/' | '/dummy/$id' | '/dummy/'
+  to: '/' | '/build/$id' | '/dummy/$id' | '/build' | '/dummy'
+  id: '__root__' | '/' | '/build/$id' | '/dummy/$id' | '/build/' | '/dummy/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuildIdRoute: typeof BuildIdRoute
   DummyIdRoute: typeof DummyIdRoute
+  BuildIndexRoute: typeof BuildIndexRoute
   DummyIndexRoute: typeof DummyIndexRoute
 }
 
@@ -75,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DummyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/build/': {
+      id: '/build/'
+      path: '/build'
+      fullPath: '/build/'
+      preLoaderRoute: typeof BuildIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dummy/$id': {
       id: '/dummy/$id'
       path: '/dummy/$id'
@@ -82,12 +109,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DummyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/build/$id': {
+      id: '/build/$id'
+      path: '/build/$id'
+      fullPath: '/build/$id'
+      preLoaderRoute: typeof BuildIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuildIdRoute: BuildIdRoute,
   DummyIdRoute: DummyIdRoute,
+  BuildIndexRoute: BuildIndexRoute,
   DummyIndexRoute: DummyIndexRoute,
 }
 export const routeTree = rootRouteImport

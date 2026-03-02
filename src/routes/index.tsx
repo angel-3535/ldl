@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState, useCallback, useRef, useEffect } from 'react'
 import './index.css'
 
@@ -340,6 +340,24 @@ function RunePage() {
       <div className="runes-bg-pattern" />
 
       <header className="runes-header">
+        <nav className="runes-nav">
+          <Link to="/build" className="runes-nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+            Builds
+          </Link>
+          <Link to="/dummy" className="runes-nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M8 16h8v4H8z" />
+              <line x1="12" y1="12" x2="12" y2="16" />
+            </svg>
+            Dummies
+          </Link>
+        </nav>
         <div className="runes-title-row">
           {isEditingName ? (
             <input

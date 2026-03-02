@@ -22,9 +22,24 @@ export interface Dummy {
   updatedAt: string
 }
 
+export interface Build {
+  id: string
+  name: string
+  championKey: string | null
+  championName: string | null
+  primaryPathId: number | null
+  secondaryPathId: number | null
+  primarySelections: Record<number, number>
+  secondarySelections: Record<number, number>
+  statSelections: Record<number, string>
+  items: DummyItem[]
+  updatedAt: string
+}
+
 class LocalDatabase extends Dexie {
   inbox!: EntityTable<InboxItem, 'id'>
   dummies!: EntityTable<Dummy, 'id'>
+  builds!: EntityTable<Build, 'id'>
 
   constructor() {
     super('ldl')
@@ -34,6 +49,11 @@ class LocalDatabase extends Dexie {
     this.version(2).stores({
       inbox: 'id, createdAt',
       dummies: 'id, updatedAt',
+    })
+    this.version(3).stores({
+      inbox: 'id, createdAt',
+      dummies: 'id, updatedAt',
+      builds: 'id, updatedAt',
     })
   }
 }
@@ -111,4 +131,43 @@ export async function updateDummyById(id: string, updates: Partial<Omit<Dummy, '
 
 export async function deleteDummy(id: string): Promise<void> {
   await db.dummies.delete(id)
+}
+
+// ── Builds ──
+
+export async function listBuilds(): Promise<Build[]> {
+  return db.builds.orderBy('updatedAt').reverse().toArray()
+}
+
+export async function createBuild(name: string): Promise<Build> {
+  const build: Build = {
+    id: crypto.randomUUID(),
+    name,
+    championKey: null,
+    championName: null,
+    primaryPathId: null,
+    secondaryPathId: null,
+    primarySelections: {},
+    secondarySelections: {},
+    statSelections: {},
+    items: [],
+    updatedAt: new Date().toISOString(),
+  }
+  await db.builds.add(build)
+  return build
+}
+
+export async function getBuildById(id: string): Promise<Build | undefined> {
+  return db.builds.get(id)
+}
+
+export async function updateBuildById(id: string, updates: Partial<Omit<Build, 'id'>>): Promise<void> {
+  await db.builds.update(id, {
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  })
+}
+
+export async function deleteBuild(id: string): Promise<void> {
+  await db.builds.delete(id)
 }
