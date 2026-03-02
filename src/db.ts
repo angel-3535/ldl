@@ -36,10 +36,21 @@ export interface Build {
   updatedAt: string
 }
 
+export interface Test {
+  id: string
+  name: string
+  description: string
+  totalDamage: number
+  buildId: string | null
+  dummyId: string | null
+  updatedAt: string
+}
+
 class LocalDatabase extends Dexie {
   inbox!: EntityTable<InboxItem, 'id'>
   dummies!: EntityTable<Dummy, 'id'>
   builds!: EntityTable<Build, 'id'>
+  tests!: EntityTable<Test, 'id'>
 
   constructor() {
     super('ldl')
@@ -54,6 +65,12 @@ class LocalDatabase extends Dexie {
       inbox: 'id, createdAt',
       dummies: 'id, updatedAt',
       builds: 'id, updatedAt',
+    })
+    this.version(4).stores({
+      inbox: 'id, createdAt',
+      dummies: 'id, updatedAt',
+      builds: 'id, updatedAt',
+      tests: 'id, updatedAt',
     })
   }
 }
@@ -170,4 +187,39 @@ export async function updateBuildById(id: string, updates: Partial<Omit<Build, '
 
 export async function deleteBuild(id: string): Promise<void> {
   await db.builds.delete(id)
+}
+
+// ── Tests ──
+
+export async function listTests(): Promise<Test[]> {
+  return db.tests.orderBy('updatedAt').reverse().toArray()
+}
+
+export async function createTest(name: string): Promise<Test> {
+  const test: Test = {
+    id: crypto.randomUUID(),
+    name,
+    description: '',
+    totalDamage: 0,
+    buildId: null,
+    dummyId: null,
+    updatedAt: new Date().toISOString(),
+  }
+  await db.tests.add(test)
+  return test
+}
+
+export async function getTestById(id: string): Promise<Test | undefined> {
+  return db.tests.get(id)
+}
+
+export async function updateTestById(id: string, updates: Partial<Omit<Test, 'id'>>): Promise<void> {
+  await db.tests.update(id, {
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  })
+}
+
+export async function deleteTest(id: string): Promise<void> {
+  await db.tests.delete(id)
 }
