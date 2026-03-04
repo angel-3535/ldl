@@ -152,16 +152,21 @@ function TestCanvasPage() {
   }, [dragState, updateCBMut, updateTestMut])
 
   // ── Connection click on test card ──
+  const deleteConnMutForToggle = useMutation({
+    mutationFn: deleteTestConnection,
+    onSuccess: invalidateAll,
+  })
+
   const handleTestClick = useCallback((testId: string) => {
     if (!connectingBuildId) return
-    // Check if connection already exists
+    // Check if connection already exists — if so, remove it (toggle off)
     const exists = connections.find(c => c.testId === testId && c.buildId === connectingBuildId)
     if (exists) {
-      setConnectingBuildId(null)
+      deleteConnMutForToggle.mutate(exists.id)
       return
     }
     connectMut.mutate({ testId, buildId: connectingBuildId })
-  }, [connectingBuildId, connections, connectMut])
+  }, [connectingBuildId, connections, connectMut, deleteConnMutForToggle])
 
   // ── Build card click (start connecting) ──
   const handleBuildCardClick = useCallback((buildId: string) => {
@@ -203,6 +208,11 @@ function TestCanvasPage() {
   // ── Card dimensions for line calculations ──
   const CARD_W = 200
   const CARD_H = 100
+
+  // ── Connected test IDs for the currently selected build ──
+  const connectedTestIds = connectingBuildId
+    ? new Set(connections.filter(c => c.buildId === connectingBuildId).map(c => c.testId))
+    : null
 
   // ── Builds not yet on canvas ──
   const canvasBuildIds = new Set(canvasBuilds.map(cb => cb.buildId))
@@ -332,7 +342,7 @@ function TestCanvasPage() {
                 key={conn.id}
                 x1={x1} y1={y1}
                 x2={x2} y2={y2}
-                className="cv-connection-line"
+                className={`cv-connection-line ${connectingBuildId && conn.buildId !== connectingBuildId ? 'dimmed' : ''}`}
                 filter="url(#glow)"
               />
             )
@@ -351,7 +361,7 @@ function TestCanvasPage() {
           return (
             <div
               key={conn.id}
-              className="cv-damage-badge"
+              className={`cv-damage-badge ${connectingBuildId && conn.buildId !== connectingBuildId ? 'dimmed' : ''}`}
               style={{ left: mx, top: my }}
             >
               {editingDamage === conn.id ? (
@@ -387,7 +397,7 @@ function TestCanvasPage() {
           return (
             <div
               key={cb.id}
-              className={`cv-card cv-build-card ${isConnecting ? 'connecting' : ''}`}
+              className={`cv-card cv-build-card ${isConnecting ? 'connecting' : ''} ${connectingBuildId && !isConnecting ? 'dimmed' : ''}`}
               style={{ left: cb.x, top: cb.y, width: CARD_W }}
               onPointerDown={e => handlePointerDown(e, 'build', cb.id, cb.x, cb.y)}
               onClick={() => handleBuildCardClick(cb.buildId)}
@@ -423,11 +433,13 @@ function TestCanvasPage() {
         {tests.map(test => {
           const dummy = test.dummyId ? dummyMap.get(test.dummyId) : null
           const isTarget = !!connectingBuildId
+          const isConnectedToSelected = connectedTestIds?.has(test.id) ?? false
+          const isDimmedTest = connectingBuildId && !isConnectedToSelected
 
           return (
             <div
               key={test.id}
-              className={`cv-card cv-test-card ${isTarget ? 'target' : ''}`}
+              className={`cv-card cv-test-card ${isTarget ? 'target' : ''} ${isDimmedTest ? 'dimmed' : ''} ${isConnectedToSelected ? 'connected' : ''}`}
               style={{ left: test.x, top: test.y, width: CARD_W }}
               onPointerDown={e => handlePointerDown(e, 'test', test.id, test.x, test.y)}
               onClick={() => handleTestClick(test.id)}

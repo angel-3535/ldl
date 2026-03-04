@@ -745,3 +745,25 @@
   color: #3d3d39;
   margin-top: 0.25rem !important;
 }
+
+/* ── Dimming when a build is selected ── */
+.cv-card.dimmed {
+  opacity: 0.25;
+  transition: opacity 0.3s ease;
+  pointer-events: auto;
+}
+
+.cv-damage-badge.dimmed {
+  opacity: 0.2;
+  transition: opacity 0.3s ease;
+}
+
+.cv-connection-line.dimmed {
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+
+.cv-test-card.connected {
+  border-color: rgba(200, 170, 110, 0.5);
+  box-shadow: 0 0 10px rgba(200, 170, 110, 0.15);
+}
