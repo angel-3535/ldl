@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useConfiguredHotkey } from '../hotkeys'
 import './ItemDrawer.css'
 
 const DDRAGON_VERSION = '15.4.1'
@@ -62,7 +63,7 @@ function parseLethality(description: string): number | undefined {
   return match ? Number(match[1]) : undefined
 }
 
-export function useItems() {
+function useItems() {
   return useQuery({
     queryKey: ['ddragon-items'],
     queryFn: async (): Promise<ItemEntry[]> => {
@@ -175,25 +176,19 @@ export default function ItemDrawer({
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const searchRef = useRef<HTMLInputElement>(null)
+  const handleClose = useCallback(() => {
+    setSearch('')
+    setActiveFilter(null)
+    onClose()
+  }, [onClose])
 
   useEffect(() => {
     if (open && searchRef.current) {
       setTimeout(() => searchRef.current?.focus(), 300)
     }
-    if (!open) {
-      setSearch('')
-      setActiveFilter(null)
-    }
   }, [open])
 
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [open, onClose])
+  useConfiguredHotkey('closeOverlay', handleClose, { enabled: open, allowInInput: true })
 
   const filtered = useMemo(() => {
     if (!items) return []
@@ -225,13 +220,13 @@ export default function ItemDrawer({
 
   return (
     <>
-      <div className={`drawer-overlay ${open ? 'open' : ''}`} onClick={onClose} />
+      <div className={`drawer-overlay ${open ? 'open' : ''}`} onClick={handleClose} />
       <div className={`drawer-panel ${open ? 'open' : ''}`}>
         <div className="drawer-header">
           <h2 className="drawer-title">
             {slotIndex !== null ? `Slot ${slotIndex + 1} — Choose Item` : 'Choose Item'}
           </h2>
-          <button className="drawer-close" onClick={onClose}>
+          <button className="drawer-close" onClick={handleClose}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />

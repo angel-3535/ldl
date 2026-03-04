@@ -4,7 +4,8 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { getBuildById, updateBuildById, deleteBuild } from '../../db'
 import type { DummyItem } from '../../db'
 import ItemDrawer from '../../components/ItemDrawer'
-import ChampionDrawer, { championSquareIcon } from '../../components/ChampionDrawer'
+import ChampionDrawer from '../../components/ChampionDrawer'
+import { championSquareIcon } from '../../lib/ddragon'
 import './index.css'
 
 const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/img'
@@ -254,14 +255,15 @@ function BuildEditPage() {
   const [statSelections, setStatSelections] = useState<Record<number, string>>({})
 
   useEffect(() => {
-    if (build) {
+    if (!build) return
+    queueMicrotask(() => {
       setNameValue(build.name)
       setPrimaryPathId(build.primaryPathId)
       setSecondaryPathId(build.secondaryPathId)
       setPrimarySelections(build.primarySelections)
       setSecondarySelections(build.secondarySelections)
       setStatSelections(build.statSelections)
-    }
+    })
   }, [build])
 
   const flashSaved = useCallback(() => {

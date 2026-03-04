@@ -1,13 +1,11 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useConfiguredHotkey } from '../hotkeys'
+import { championSquareIcon } from '../lib/ddragon'
 import './ChampionDrawer.css'
 
 const DDRAGON_VERSION = '15.4.1'
 const DDRAGON_CHAMPIONS_URL = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/data/en_US/champion.json`
-
-export function championSquareIcon(championKey: string) {
-  return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${championKey}.png`
-}
 
 interface DDragonChampion {
   id: string
@@ -27,7 +25,7 @@ export interface ChampionEntry {
   icon: string
 }
 
-export function useChampions() {
+function useChampions() {
   return useQuery({
     queryKey: ['ddragon-champions'],
     queryFn: async (): Promise<ChampionEntry[]> => {
@@ -104,25 +102,19 @@ export default function ChampionDrawer({
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const searchRef = useRef<HTMLInputElement>(null)
+  const handleClose = useCallback(() => {
+    setSearch('')
+    setActiveFilter(null)
+    onClose()
+  }, [onClose])
 
   useEffect(() => {
     if (open && searchRef.current) {
       setTimeout(() => searchRef.current?.focus(), 300)
     }
-    if (!open) {
-      setSearch('')
-      setActiveFilter(null)
-    }
   }, [open])
 
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [open, onClose])
+  useConfiguredHotkey('closeOverlay', handleClose, { enabled: open, allowInInput: true })
 
   const filtered = useMemo(() => {
     if (!champions) return []
@@ -154,11 +146,11 @@ export default function ChampionDrawer({
 
   return (
     <>
-      <div className={`champ-drawer-overlay ${open ? 'open' : ''}`} onClick={onClose} />
+      <div className={`champ-drawer-overlay ${open ? 'open' : ''}`} onClick={handleClose} />
       <div className={`champ-drawer-panel ${open ? 'open' : ''}`}>
         <div className="champ-drawer-header">
           <h2 className="champ-drawer-title">Choose Champion</h2>
-          <button className="champ-drawer-close" onClick={onClose}>
+          <button className="champ-drawer-close" onClick={handleClose}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />

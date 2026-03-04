@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useCallback } from 'react'
 import { listDummies, createDummy } from '../../db'
 import type { Dummy } from '../../db'
+import { useConfiguredHotkey } from '../../hotkeys'
 import './index.css'
 
 const DDRAGON_VERSION = '15.4.1'
@@ -36,6 +37,10 @@ function DummyListPage() {
     setNewName('')
     setCreating(false)
   }, [newName, createMutation])
+
+  useConfiguredHotkey('createDummy', () => {
+    setCreating(true)
+  })
 
   return (
     <div className="dummy-page">

@@ -61,6 +61,13 @@ export interface CanvasBuild {
   y: number
 }
 
+interface LegacyTestRecord {
+  buildId?: string
+  totalDamage?: number
+  x?: number
+  y?: number
+}
+
 class LocalDatabase extends Dexie {
   inbox!: EntityTable<InboxItem, 'id'>
   dummies!: EntityTable<Dummy, 'id'>
@@ -97,9 +104,9 @@ class LocalDatabase extends Dexie {
       testConnections: 'id, testId, buildId, updatedAt',
       canvasBuilds: 'id, buildId',
     }).upgrade(tx => {
-      return tx.table('tests').toCollection().modify(test => {
-        delete (test as any).buildId
-        delete (test as any).totalDamage
+      return tx.table('tests').toCollection().modify((test: LegacyTestRecord) => {
+        delete test.buildId
+        delete test.totalDamage
         test.x = 500
         test.y = 200 + Math.random() * 300
       })

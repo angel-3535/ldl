@@ -59,6 +59,42 @@ button {
   margin: 0 auto;
 }
 
+.app-settings-fab {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 170, 110, 0.15);
+  background: rgba(5, 14, 24, 0.85);
+  color: rgba(240, 230, 210, 0.4);
+  backdrop-filter: blur(10px);
+  transition: all 180ms ease;
+}
+
+.app-settings-fab:hover {
+  color: #c8aa6e;
+  border-color: rgba(200, 170, 110, 0.35);
+}
+
+.app-settings-fab:hover svg {
+  transform: rotate(45deg);
+}
+
+.app-settings-fab svg {
+  transition: transform 300ms ease;
+}
+
+.app-settings-fab.active {
+  border-color: rgba(200, 170, 110, 0.4);
+  color: #c8aa6e;
+}
+
 .hero {
   padding: 2rem;
 }
@@ -241,6 +277,11 @@ button {
   .app-shell {
     width: min(100vw - 1rem, 1100px);
     padding-top: 1.25rem;
+  }
+
+  .app-settings-fab {
+    bottom: 0.75rem;
+    left: 0.75rem;
   }
 
   .hero,

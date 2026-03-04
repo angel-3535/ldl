@@ -65,11 +65,12 @@ function DummyEditPage() {
   const nameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (dummy) {
+    if (!dummy) return
+    queueMicrotask(() => {
       setHealth(dummy.health)
       setResist(dummy.resist)
       setNameValue(dummy.name)
-    }
+    })
   }, [dummy])
 
   const flashSaved = useCallback(() => {

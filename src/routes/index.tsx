@@ -8,7 +8,8 @@ import {
   listTestConnections, createTestConnection, updateTestConnection, deleteTestConnection,
 } from '../db'
 import type { Build, Dummy, CanvasBuild, TestConnection } from '../db'
-import { championSquareIcon } from '../components/ChampionDrawer'
+import { useConfiguredHotkey } from '../hotkeys'
+import { championSquareIcon } from '../lib/ddragon'
 import './index.css'
 
 const DDRAGON_VERSION = '15.4.1'
@@ -209,6 +210,65 @@ function TestCanvasPage() {
   const CARD_W = 200
   const CARD_H = 100
 
+  const closeTransientUi = useCallback(() => {
+    if (dummyPickerTestId) {
+      setDummyPickerTestId(null)
+      return
+    }
+
+    if (editingDamage) {
+      setEditingDamage(null)
+      return
+    }
+
+    if (editingTestName) {
+      setEditingTestName(null)
+      return
+    }
+
+    if (creatingTest) {
+      setCreatingTest(false)
+      setNewTestName('')
+      return
+    }
+
+    if (buildPickerOpen) {
+      setBuildPickerOpen(false)
+      return
+    }
+
+    if (connectingBuildId) {
+      setConnectingBuildId(null)
+    }
+  }, [buildPickerOpen, connectingBuildId, creatingTest, dummyPickerTestId, editingDamage, editingTestName])
+
+  useConfiguredHotkey('addBuildToCanvas', () => {
+    setCreatingTest(false)
+    setNewTestName('')
+    setDummyPickerTestId(null)
+    setConnectingBuildId(null)
+    setBuildPickerOpen((open) => !open)
+  })
+
+  useConfiguredHotkey('addTestToCanvas', () => {
+    setBuildPickerOpen(false)
+    setConnectingBuildId(null)
+    setDummyPickerTestId(null)
+    setCreatingTest(true)
+  })
+
+  useConfiguredHotkey('closeOverlay', closeTransientUi, {
+    enabled: Boolean(
+      buildPickerOpen ||
+      creatingTest ||
+      connectingBuildId ||
+      dummyPickerTestId ||
+      editingDamage ||
+      editingTestName,
+    ),
+    allowInInput: true,
+  })
+
   // ── Connected test IDs for the currently selected build ──
   const connectedTestIds = connectingBuildId
     ? new Set(connections.filter(c => c.buildId === connectingBuildId).map(c => c.testId))
@@ -243,6 +303,13 @@ function TestCanvasPage() {
                 <circle cx="12" cy="8" r="4" /><path d="M8 16h8v4H8z" />
               </svg>
               Dummies
+            </Link>
+            <Link to="/settings" className="cv-nav-link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 1 1-4 0v-.2a1 1 0 0 0-.7-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 1 1 0-4h.2a1 1 0 0 0 .9-.7 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2H9a1 1 0 0 0 .6-.9V4a2 2 0 1 1 4 0v.2a1 1 0 0 0 .7.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1v.1a1 1 0 0 0 .9.6h.2a2 2 0 1 1 0 4h-.2a1 1 0 0 0-.9.7z" />
+              </svg>
+              Settings
             </Link>
 
           </nav>

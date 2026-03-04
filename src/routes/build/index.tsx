@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
 import { listBuilds, createBuild } from "../../db";
 import type { Build } from "../../db";
-import { championSquareIcon } from "../../components/ChampionDrawer";
+import { useConfiguredHotkey } from "../../hotkeys";
+import { championSquareIcon } from "../../lib/ddragon";
 import "./index.css";
 
 const DDRAGON = "https://ddragon.leagueoflegends.com/cdn/img";
@@ -72,6 +73,10 @@ function BuildListPage() {
     setNewName("");
     setCreating(false);
   }, [newName, createMutation]);
+
+  useConfiguredHotkey("createBuild", () => {
+    setCreating(true);
+  });
 
   const getKeystoneId = (build: Build): number | null => {
     if (build.primarySelections && build.primarySelections[0]) {
