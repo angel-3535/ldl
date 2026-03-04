@@ -40,10 +40,25 @@ export interface Test {
   id: string
   name: string
   description: string
-  totalDamage: number
-  buildId: string | null
   dummyId: string | null
+  x: number
+  y: number
   updatedAt: string
+}
+
+export interface TestConnection {
+  id: string
+  testId: string
+  buildId: string
+  damage: number
+  updatedAt: string
+}
+
+export interface CanvasBuild {
+  id: string
+  buildId: string
+  x: number
+  y: number
 }
 
 class LocalDatabase extends Dexie {
@@ -51,6 +66,8 @@ class LocalDatabase extends Dexie {
   dummies!: EntityTable<Dummy, 'id'>
   builds!: EntityTable<Build, 'id'>
   tests!: EntityTable<Test, 'id'>
+  testConnections!: EntityTable<TestConnection, 'id'>
+  canvasBuilds!: EntityTable<CanvasBuild, 'id'>
 
   constructor() {
     super('ldl')
@@ -71,6 +88,21 @@ class LocalDatabase extends Dexie {
       dummies: 'id, updatedAt',
       builds: 'id, updatedAt',
       tests: 'id, updatedAt',
+    })
+    this.version(5).stores({
+      inbox: 'id, createdAt',
+      dummies: 'id, updatedAt',
+      builds: 'id, updatedAt',
+      tests: 'id, updatedAt',
+      testConnections: 'id, testId, buildId, updatedAt',
+      canvasBuilds: 'id, buildId',
+    }).upgrade(tx => {
+      return tx.table('tests').toCollection().modify(test => {
+        delete (test as any).buildId
+        delete (test as any).totalDamage
+        test.x = 500
+        test.y = 200 + Math.random() * 300
+      })
     })
   }
 }
@@ -195,14 +227,14 @@ export async function listTests(): Promise<Test[]> {
   return db.tests.orderBy('updatedAt').reverse().toArray()
 }
 
-export async function createTest(name: string): Promise<Test> {
+export async function createTest(name: string, x = 500, y = 300): Promise<Test> {
   const test: Test = {
     id: crypto.randomUUID(),
     name,
     description: '',
-    totalDamage: 0,
-    buildId: null,
     dummyId: null,
+    x,
+    y,
     updatedAt: new Date().toISOString(),
   }
   await db.tests.add(test)
@@ -221,5 +253,64 @@ export async function updateTestById(id: string, updates: Partial<Omit<Test, 'id
 }
 
 export async function deleteTest(id: string): Promise<void> {
+  await db.testConnections.where('testId').equals(id).delete()
   await db.tests.delete(id)
+}
+
+// ── Test Connections ──
+
+export async function listTestConnections(): Promise<TestConnection[]> {
+  return db.testConnections.toArray()
+}
+
+export async function createTestConnection(testId: string, buildId: string): Promise<TestConnection> {
+  const conn: TestConnection = {
+    id: crypto.randomUUID(),
+    testId,
+    buildId,
+    damage: 0,
+    updatedAt: new Date().toISOString(),
+  }
+  await db.testConnections.add(conn)
+  return conn
+}
+
+export async function updateTestConnection(id: string, updates: Partial<Omit<TestConnection, 'id'>>): Promise<void> {
+  await db.testConnections.update(id, {
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  })
+}
+
+export async function deleteTestConnection(id: string): Promise<void> {
+  await db.testConnections.delete(id)
+}
+
+// ── Canvas Builds ──
+
+export async function listCanvasBuilds(): Promise<CanvasBuild[]> {
+  return db.canvasBuilds.toArray()
+}
+
+export async function addCanvasBuild(buildId: string, x = 100, y = 300): Promise<CanvasBuild> {
+  const cb: CanvasBuild = {
+    id: crypto.randomUUID(),
+    buildId,
+    x,
+    y,
+  }
+  await db.canvasBuilds.add(cb)
+  return cb
+}
+
+export async function updateCanvasBuild(id: string, updates: Partial<Omit<CanvasBuild, 'id'>>): Promise<void> {
+  await db.canvasBuilds.update(id, updates)
+}
+
+export async function removeCanvasBuild(id: string): Promise<void> {
+  const cb = await db.canvasBuilds.get(id)
+  if (cb) {
+    await db.testConnections.where('buildId').equals(cb.buildId).delete()
+  }
+  await db.canvasBuilds.delete(id)
 }

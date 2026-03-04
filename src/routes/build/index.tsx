@@ -98,7 +98,7 @@ function BuildListPage() {
             >
               <polyline points="15 18 9 12 15 6" />
             </svg>
-            Runes
+            Canvas
           </Link>
         </div>
         <h1 className="build-title">Builds</h1>

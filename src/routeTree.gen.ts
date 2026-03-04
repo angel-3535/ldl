@@ -10,21 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as DummyIndexRouteImport } from './routes/dummy/index'
 import { Route as BuildIndexRouteImport } from './routes/build/index'
-import { Route as TestIdRouteImport } from './routes/test/$id'
 import { Route as DummyIdRouteImport } from './routes/dummy/$id'
 import { Route as BuildIdRouteImport } from './routes/build/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestIndexRoute = TestIndexRouteImport.update({
-  id: '/test/',
-  path: '/test/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DummyIndexRoute = DummyIndexRouteImport.update({
@@ -35,11 +28,6 @@ const DummyIndexRoute = DummyIndexRouteImport.update({
 const BuildIndexRoute = BuildIndexRouteImport.update({
   id: '/build/',
   path: '/build/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestIdRoute = TestIdRouteImport.update({
-  id: '/test/$id',
-  path: '/test/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DummyIdRoute = DummyIdRouteImport.update({
@@ -57,68 +45,38 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/build/$id': typeof BuildIdRoute
   '/dummy/$id': typeof DummyIdRoute
-  '/test/$id': typeof TestIdRoute
   '/build/': typeof BuildIndexRoute
   '/dummy/': typeof DummyIndexRoute
-  '/test/': typeof TestIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/build/$id': typeof BuildIdRoute
   '/dummy/$id': typeof DummyIdRoute
-  '/test/$id': typeof TestIdRoute
   '/build': typeof BuildIndexRoute
   '/dummy': typeof DummyIndexRoute
-  '/test': typeof TestIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/build/$id': typeof BuildIdRoute
   '/dummy/$id': typeof DummyIdRoute
-  '/test/$id': typeof TestIdRoute
   '/build/': typeof BuildIndexRoute
   '/dummy/': typeof DummyIndexRoute
-  '/test/': typeof TestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/build/$id'
-    | '/dummy/$id'
-    | '/test/$id'
-    | '/build/'
-    | '/dummy/'
-    | '/test/'
+  fullPaths: '/' | '/build/$id' | '/dummy/$id' | '/build/' | '/dummy/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/build/$id'
-    | '/dummy/$id'
-    | '/test/$id'
-    | '/build'
-    | '/dummy'
-    | '/test'
-  id:
-    | '__root__'
-    | '/'
-    | '/build/$id'
-    | '/dummy/$id'
-    | '/test/$id'
-    | '/build/'
-    | '/dummy/'
-    | '/test/'
+  to: '/' | '/build/$id' | '/dummy/$id' | '/build' | '/dummy'
+  id: '__root__' | '/' | '/build/$id' | '/dummy/$id' | '/build/' | '/dummy/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuildIdRoute: typeof BuildIdRoute
   DummyIdRoute: typeof DummyIdRoute
-  TestIdRoute: typeof TestIdRoute
   BuildIndexRoute: typeof BuildIndexRoute
   DummyIndexRoute: typeof DummyIndexRoute
-  TestIndexRoute: typeof TestIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -128,13 +86,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test/': {
-      id: '/test/'
-      path: '/test'
-      fullPath: '/test/'
-      preLoaderRoute: typeof TestIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dummy/': {
@@ -149,13 +100,6 @@ declare module '@tanstack/react-router' {
       path: '/build'
       fullPath: '/build/'
       preLoaderRoute: typeof BuildIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test/$id': {
-      id: '/test/$id'
-      path: '/test/$id'
-      fullPath: '/test/$id'
-      preLoaderRoute: typeof TestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dummy/$id': {
@@ -179,10 +123,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuildIdRoute: BuildIdRoute,
   DummyIdRoute: DummyIdRoute,
-  TestIdRoute: TestIdRoute,
   BuildIndexRoute: BuildIndexRoute,
   DummyIndexRoute: DummyIndexRoute,
-  TestIndexRoute: TestIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
